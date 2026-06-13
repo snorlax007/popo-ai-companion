@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Popo – Your AI Desk Companion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --purple-900: #3b0764;
+      --purple-800: #4c1d95;
+      --purple-700: #5b21b6;
+      --purple-600: #6d28d9;
+      --purple-500: #7c3aed;
+      --purple-400: #8b5cf6;
+      --purple-300: #a78bfa;
+      --purple-100: #ede9fe;
+      --purple-50:  #f5f3ff;
+      --indigo-500: #6366f1;
+      --indigo-400: #818cf8;
+      --blue-500:   #3b82f6;
+      --text-primary:   #0f0a1e;
+      --text-secondary: #4b4665;
+      --text-muted:     #7c7599;
+      --surface:        #ffffff;
+      --surface-2:      #f8f7fc;
+      --surface-3:      #f0eef9;
+      --border:         #e8e3f4;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-sm: 0 1px 3px rgba(109,40,217,.08), 0 1px 2px rgba(109,40,217,.04);
+      --shadow-md: 0 4px 16px rgba(109,40,217,.10), 0 2px 6px rgba(109,40,217,.06);
+      --shadow-lg: 0 12px 40px rgba(109,40,217,.14), 0 4px 12px rgba(109,40,217,.08);
+      --shadow-xl: 0 24px 64px rgba(109,40,217,.18), 0 8px 24px rgba(109,40,217,.10);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--surface);
+      color: var(--text-primary);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ───── NAV ───── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 48px;
+      height: 68px;
+      background: rgba(255,255,255,.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow .3s;
+    }
+    nav.scrolled { box-shadow: var(--shadow-sm); }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .nav-logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--purple-600), var(--indigo-400));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .nav-logo-text {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -.5px;
+      background: linear-gradient(135deg, var(--purple-700), var(--indigo-500));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: color .2s;
+    }
+    .nav-links a:hover { color: var(--purple-600); }
+
+    .nav-cta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-ghost {
+      padding: 8px 18px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: border-color .2s, color .2s;
+    }
+    .btn-ghost:hover { border-color: var(--purple-400); color: var(--purple-600); }
+
+    .btn-primary {
+      padding: 9px 22px;
+      border: none;
+      border-radius: 8px;
+      background: linear-gradient(135deg, var(--purple-600), var(--indigo-500));
+      color: #fff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 2px 8px rgba(109,40,217,.35);
+    }
+    .btn-primary:hover { opacity: .92; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(109,40,217,.40); }
+    .btn-primary:active { transform: translateY(0); }
+
+    /* ───── HERO ───── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 120px 24px 80px;
+      background:
+        radial-gradient(ellipse 80% 50% at 50% -10%, rgba(139,92,246,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 40% at 80% 50%, rgba(99,102,241,.10) 0%, transparent 60%),
+        var(--surface);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 80%, rgba(124,58,237,.06) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(99,102,241,.06) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: var(--purple-50);
+      border: 1px solid rgba(124,58,237,.2);
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--purple-700);
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      animation: fadeUp .6s ease both;
+    }
+    .hero-badge-dot {
+      width: 7px; height: 7px;
+      background: var(--purple-500);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: .6; transform: scale(.85); }
+    }
+
+    .hero-headline {
+      font-size: clamp(42px, 6vw, 76px);
+      font-weight: 900;
+      letter-spacing: -2.5px;
+      line-height: 1.05;
+      max-width: 820px;
+      animation: fadeUp .7s .1s ease both;
+    }
+    .hero-headline span {
+      background: linear-gradient(135deg, var(--purple-600) 0%, var(--indigo-400) 60%, var(--blue-500) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      margin-top: 20px;
+      font-size: clamp(16px, 2vw, 20px);
+      color: var(--text-secondary);
+      max-width: 560px;
+      font-weight: 400;
+      line-height: 1.65;
+      animation: fadeUp .7s .2s ease both;
+    }
+
+    .hero-actions {
+      margin-top: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      animation: fadeUp .7s .3s ease both;
+    }
+
+    .btn-large {
+      padding: 14px 32px;
+      font-size: 15px;
+      border-radius: 10px;
+    }
+
+    .btn-outline-large {
+      padding: 13px 30px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: border-color .2s, color .2s, background .2s;
+    }
+    .btn-outline-large:hover { border-color: var(--purple-400); color: var(--purple-600); background: var(--purple-50); }
+
+    .hero-social-proof {
+      margin-top: 28px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      color: var(--text-muted);
+      font-size: 13px;
+      animation: fadeUp .7s .4s ease both;
+    }
+    .hero-avatars {
+      display: flex;
+    }
+    .hero-avatars span {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 2px solid white;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      background: linear-gradient(135deg, var(--purple-300), var(--indigo-400));
+      margin-left: -8px;
+    }
+    .hero-avatars span:first-child { margin-left: 0; }
+
+    /* ───── VIDEO ───── */
+    .hero-video-wrap {
+      margin-top: 64px;
+      width: 100%;
+      max-width: 880px;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl), 0 0 0 1px var(--border);
+      position: relative;
+      animation: fadeUp .8s .5s ease both;
+    }
+    .hero-video-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: calc(var(--radius-xl) + 1px);
+      background: linear-gradient(135deg, rgba(124,58,237,.3), rgba(99,102,241,.2), transparent);
+      z-index: -1;
+      filter: blur(20px);
+    }
+    .hero-video-wrap video {
+      width: 100%;
+      display: block;
+      border-radius: var(--radius-xl);
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ───── LOGOS ───── */
+    .logos-strip {
+      padding: 40px 48px;
+      background: var(--surface-2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      text-align: center;
+    }
+    .logos-label {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+    }
+    .logos-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .logo-item {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: -.3px;
+      opacity: .6;
+      transition: opacity .2s;
+    }
+    .logo-item:hover { opacity: 1; }
+
+    /* ───── SECTIONS ───── */
+    section { padding: 96px 48px; }
+
+    .section-tag {
+      display: inline-block;
+      padding: 4px 12px;
+      background: var(--purple-50);
+      border: 1px solid rgba(124,58,237,.2);
+      border-radius: 100px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--purple-700);
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 800;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      max-width: 600px;
+    }
+    .section-title span {
+      background: linear-gradient(135deg, var(--purple-600), var(--indigo-400));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-sub {
+      margin-top: 16px;
+      color: var(--text-secondary);
+      font-size: 17px;
+      line-height: 1.65;
+      max-width: 520px;
+    }
+
+    .section-header { text-align: center; margin-bottom: 64px; }
+    .section-header .section-sub { margin-left: auto; margin-right: auto; }
+
+    /* ───── FEATURES GRID ───── */
+    .features { background: var(--surface); }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      max-width: 1120px;
+      margin: 0 auto;
+    }
+
+    .feat-card {
+      background: var(--surface);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: border-color .25s, box-shadow .25s, transform .25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .feat-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(124,58,237,.04), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+    .feat-card:hover { border-color: rgba(124,58,237,.35); box-shadow: var(--shadow-md); transform: translateY(-3px); }
+    .feat-card:hover::before { opacity: 1; }
+
+    .feat-icon {
+      width: 48px; height: 48px;
+      border-radius: 12px;
+      background: var(--purple-50);
+      border: 1px solid rgba(124,58,237,.15);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      margin-bottom: 20px;
+    }
+
+    .feat-title {
+      font-size: 17px;
+      font-weight: 700;
+      letter-spacing: -.3px;
+      margin-bottom: 10px;
+    }
+
+    .feat-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .feat-card.featured {
+      background: linear-gradient(135deg, var(--purple-600) 0%, var(--indigo-500) 100%);
+      border-color: transparent;
+      color: white;
+    }
+    .feat-card.featured .feat-icon {
+      background: rgba(255,255,255,.15);
+      border-color: rgba(255,255,255,.2);
+    }
+    .feat-card.featured .feat-desc { color: rgba(255,255,255,.75); }
+
+    /* ───── HOW IT WORKS ───── */
+    .how-it-works { background: var(--surface-2); }
+
+    .steps-container {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 60px 1fr;
+      gap: 28px;
+      padding: 40px 0;
+      border-bottom: 1px solid var(--border);
+      align-items: start;
+    }
+    .step:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--purple-600), var(--indigo-500));
+      display: flex; align-items: center; justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: 800;
+      flex-shrink: 0;
+      box-shadow: 0 4px 14px rgba(109,40,217,.35);
+    }
+
+    .step-content {}
+    .step-title {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -.4px;
+      margin-bottom: 8px;
+    }
+    .step-desc {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.65;
+      max-width: 600px;
+    }
+
+    /* ───── PRODUCT SHOWCASE ───── */
+    .showcase { background: var(--surface); }
+
+    .showcase-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 72px;
+      align-items: center;
+    }
+
+    .showcase-img {
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      box-shadow: var(--shadow-xl);
+      background: linear-gradient(135deg, #f0eef9 0%, #e8e3f4 100%);
+      display: flex; align-items: center; justify-content: center;
+      aspect-ratio: 1;
+      position: relative;
+    }
+    .showcase-img img {
+      width: 72%;
+      height: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 20px 40px rgba(109,40,217,.2));
+      animation: float 4s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .showcase-badge {
+      position: absolute;
+      bottom: 24px; right: 24px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 18px;
+      box-shadow: var(--shadow-md);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .showcase-badge-icon {
+      width: 36px; height: 36px;
+      background: var(--purple-50);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .showcase-badge-text { font-size: 12px; }
+    .showcase-badge-label { font-weight: 700; color: var(--text-primary); }
+    .showcase-badge-sub { color: var(--text-muted); }
+
+    .showcase-content {}
+    .showcase-features-list {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    .showcase-feat {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+    .showcase-feat-icon {
+      width: 36px; height: 36px;
+      background: var(--purple-50);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .showcase-feat-title { font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+    .showcase-feat-desc { font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+    /* ───── STATS ───── */
+    .stats {
+      background: linear-gradient(135deg, var(--purple-900) 0%, #1e1148 40%, #1a0f3e 100%);
+      color: white;
+    }
+    .stats-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+    }
+    .stat-item {
+      text-align: center;
+      padding: 40px 24px;
+      border-right: 1px solid rgba(255,255,255,.1);
+    }
+    .stat-item:last-child { border-right: none; }
+    .stat-num {
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: -2px;
+      background: linear-gradient(135deg, #fff 0%, var(--purple-300) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label {
+      margin-top: 6px;
+      font-size: 14px;
+      color: rgba(255,255,255,.6);
+      font-weight: 500;
+    }
+
+    /* ───── USE CASES ───── */
+    .usecases { background: var(--surface-2); }
+
+    .usecases-grid {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .usecase-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      transition: box-shadow .25s, transform .25s;
+    }
+    .usecase-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+
+    .usecase-header {
+      height: 120px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 48px;
+    }
+    .usecase-header.uc1 { background: linear-gradient(135deg, #fef3c7, #fde68a); }
+    .usecase-header.uc2 { background: linear-gradient(135deg, #d1fae5, #a7f3d0); }
+    .usecase-header.uc3 { background: linear-gradient(135deg, #dbeafe, #bfdbfe); }
+    .usecase-header.uc4 { background: linear-gradient(135deg, #ede9fe, #ddd6fe); }
+    .usecase-header.uc5 { background: linear-gradient(135deg, #fce7f3, #fbcfe8); }
+    .usecase-header.uc6 { background: linear-gradient(135deg, #f1f5f9, #e2e8f0); }
+
+    .usecase-body { padding: 24px; }
+    .usecase-tag {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--purple-600);
+      margin-bottom: 8px;
+    }
+    .usecase-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; letter-spacing: -.3px; }
+    .usecase-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ───── TESTIMONIALS ───── */
+    .testimonials { background: var(--surface); }
+
+    .testimonials-grid {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .testimonial-card {
+      background: var(--surface-2);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: box-shadow .25s;
+    }
+    .testimonial-card:hover { box-shadow: var(--shadow-md); }
+
+    .testimonial-stars {
+      display: flex; gap: 3px; margin-bottom: 16px;
+    }
+    .star { color: #f59e0b; font-size: 16px; }
+
+    .testimonial-quote {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--text-primary);
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .testimonial-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--purple-400), var(--indigo-400));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      color: white;
+      font-weight: 700;
+    }
+    .testimonial-name { font-size: 14px; font-weight: 700; }
+    .testimonial-role { font-size: 12px; color: var(--text-muted); }
+
+    /* ───── CTA BANNER ───── */
+    .cta-banner {
+      padding: 96px 48px;
+      background: linear-gradient(135deg, var(--purple-800) 0%, var(--indigo-500) 60%, var(--blue-500) 100%);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    .cta-banner-title {
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 900;
+      color: white;
+      letter-spacing: -1.5px;
+      line-height: 1.1;
+      max-width: 680px;
+      margin: 0 auto 20px;
+      position: relative;
+    }
+    .cta-banner-sub {
+      font-size: 18px;
+      color: rgba(255,255,255,.75);
+      max-width: 480px;
+      margin: 0 auto 40px;
+      position: relative;
+    }
+    .cta-banner-actions {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+    .btn-white {
+      padding: 14px 32px;
+      border: none;
+      border-radius: 10px;
+      background: white;
+      color: var(--purple-700);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: opacity .2s, transform .15s, box-shadow .2s;
+      box-shadow: 0 4px 20px rgba(0,0,0,.2);
+    }
+    .btn-white:hover { opacity: .95; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,0,0,.25); }
+
+    .btn-outline-white {
+      padding: 13px 30px;
+      border: 2px solid rgba(255,255,255,.4);
+      border-radius: 10px;
+      background: transparent;
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: border-color .2s, background .2s;
+    }
+    .btn-outline-white:hover { border-color: white; background: rgba(255,255,255,.08); }
+
+    /* ───── FOOTER ───── */
+    footer {
+      background: var(--text-primary);
+      color: rgba(255,255,255,.6);
+      padding: 60px 48px 36px;
+    }
+    .footer-top {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+    .footer-brand {}
+    .footer-logo {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 16px;
+    }
+    .footer-logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--purple-500), var(--indigo-400));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .footer-logo-text {
+      font-size: 18px;
+      font-weight: 800;
+      color: white;
+      letter-spacing: -.4px;
+    }
+    .footer-tagline { font-size: 14px; line-height: 1.6; max-width: 260px; }
+
+    .footer-col-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      letter-spacing: .03em;
+      margin-bottom: 16px;
+    }
+    .footer-links { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-links a {
+      text-decoration: none;
+      color: rgba(255,255,255,.5);
+      font-size: 14px;
+      transition: color .2s;
+    }
+    .footer-links a:hover { color: rgba(255,255,255,.9); }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255,255,255,.08);
+      padding-top: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+    .footer-bottom-links { display: flex; gap: 24px; }
+    .footer-bottom-links a { color: rgba(255,255,255,.4); text-decoration: none; transition: color .2s; }
+    .footer-bottom-links a:hover { color: rgba(255,255,255,.8); }
+
+    /* ───── SCROLL REVEAL ───── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity .65s ease, transform .65s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    .reveal-delay-1 { transition-delay: .1s; }
+    .reveal-delay-2 { transition-delay: .2s; }
+    .reveal-delay-3 { transition-delay: .3s; }
+    .reveal-delay-4 { transition-delay: .4s; }
+    .reveal-delay-5 { transition-delay: .5s; }
+
+    /* ───── PRICING ───── */
+    .pricing { background: var(--surface-3); }
+
+    .pricing-grid {
+      max-width: 960px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .pricing-card {
+      background: white;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: box-shadow .25s, transform .25s;
+      position: relative;
+    }
+    .pricing-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+    .pricing-card.popular {
+      border-color: var(--purple-400);
+      box-shadow: 0 0 0 4px rgba(124,58,237,.08), var(--shadow-md);
+    }
+    .popular-badge {
+      position: absolute;
+      top: -13px; left: 50%; transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--purple-600), var(--indigo-500));
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .06em;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 100px;
+    }
+    .pricing-tier { font-size: 13px; font-weight: 700; color: var(--purple-600); letter-spacing: .05em; text-transform: uppercase; margin-bottom: 8px; }
+    .pricing-price { font-size: 42px; font-weight: 900; letter-spacing: -1.5px; margin-bottom: 4px; }
+    .pricing-price span { font-size: 18px; font-weight: 600; color: var(--text-muted); }
+    .pricing-desc { font-size: 14px; color: var(--text-secondary); margin-bottom: 24px; line-height: 1.5; }
+    .pricing-divider { height: 1px; background: var(--border); margin-bottom: 24px; }
+    .pricing-features { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+    .pricing-features li { font-size: 14px; color: var(--text-secondary); display: flex; align-items: center; gap: 10px; }
+    .pricing-features li::before { content: '✓'; color: var(--purple-500); font-weight: 700; flex-shrink: 0; }
+    .pricing-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1.5px solid var(--border);
+      background: white;
+      color: var(--text-primary);
+      transition: all .2s;
+      text-align: center;
+    }
+    .pricing-btn:hover { border-color: var(--purple-400); color: var(--purple-600); background: var(--purple-50); }
+    .pricing-btn.primary-btn {
+      background: linear-gradient(135deg, var(--purple-600), var(--indigo-500));
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 2px 8px rgba(109,40,217,.35);
+    }
+    .pricing-btn.primary-btn:hover { opacity: .9; transform: translateY(-1px); }
+
+    /* ───── RESPONSIVE ───── */
+    @media (max-width: 1024px) {
+      .features-grid { grid-template-columns: repeat(2, 1fr); }
+      .usecases-grid { grid-template-columns: repeat(2, 1fr); }
+      .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+      .footer-top { grid-template-columns: 1fr 1fr; }
+      .pricing-grid { grid-template-columns: 1fr; max-width: 400px; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .stat-item:nth-child(2) { border-right: none; }
+    }
+
+    @media (max-width: 768px) {
+      nav { padding: 0 24px; }
+      .nav-links { display: none; }
+      section { padding: 64px 24px; }
+      .hero { padding: 100px 24px 64px; }
+      .features-grid { grid-template-columns: 1fr; }
+      .showcase-inner { grid-template-columns: 1fr; }
+      .usecases-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
+      .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+      .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .logos-strip { padding: 32px 24px; }
+      .logos-row { gap: 28px; }
+      .cta-banner { padding: 64px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ───── NAV ───── -->
+  <nav id="navbar">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">😊</div>
+      <span class="nav-logo-text">popo</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how-it-works">How It Works</a></li>
+      <li><a href="#use-cases">Use Cases</a></li>
+      <li><a href="#pricing">Pricing</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="btn-ghost">Log in</a>
+      <a href="#" class="btn-primary">Pre-order →</a>
+    </div>
+  </nav>
+
+  <!-- ───── HERO ───── -->
+  <section class="hero" id="hero">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Now available for pre-order
+    </div>
+    <h1 class="hero-headline">
+      Your <span>AI companion</span><br />that lives on your desk
+    </h1>
+    <p class="hero-sub">
+      Popo is an expressive AI desk companion that reacts to your emotions,
+      tracks your focus, and brings delightful intelligence to your workspace.
+    </p>
+    <div class="hero-actions">
+      <a href="#" class="btn-primary btn-large">Pre-order Popo →</a>
+      <a href="#video" class="btn-outline-large">
+        ▶ Watch the video
+      </a>
+    </div>
+    <div class="hero-social-proof">
+      <div class="hero-avatars">
+        <span>A</span><span>K</span><span>R</span><span>M</span>
+      </div>
+      <span>Loved by 4,200+ early adopters</span>
+    </div>
+    <div class="hero-video-wrap" id="video">
+      <video autoplay muted loop playsinline controls>
+        <source src="popo_ai_companion.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+    </div>
+  </section>
+
+  <!-- ───── LOGOS ───── -->
+  <div class="logos-strip">
+    <p class="logos-label">Backed by teams from</p>
+    <div class="logos-row">
+      <span class="logo-item">Google</span>
+      <span class="logo-item">Microsoft</span>
+      <span class="logo-item">Amazon</span>
+      <span class="logo-item">Meta</span>
+      <span class="logo-item">Notion</span>
+      <span class="logo-item">Figma</span>
+    </div>
+  </div>
+
+  <!-- ───── FEATURES ───── -->
+  <section class="features" id="features">
+    <div class="section-header reveal">
+      <span class="section-tag">Features</span>
+      <h2 class="section-title">Everything you need from a <span>desk companion</span></h2>
+      <p class="section-sub">Popo combines expressive hardware with a powerful AI brain to create a truly responsive presence on your desk.</p>
+    </div>
+    <div class="features-grid" style="max-width:1120px;margin:0 auto;">
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon">😄</div>
+        <div class="feat-title">Expressive Emotions</div>
+        <div class="feat-desc">Popo's face dynamically reacts to your activity, messages, and mood — smiling when you finish a task, cheering you on during a deadline.</div>
+      </div>
+      <div class="feat-card featured reveal reveal-delay-2">
+        <div class="feat-icon">🧠</div>
+        <div class="feat-title">AI-Powered Intelligence</div>
+        <div class="feat-desc">Powered by advanced LLMs, Popo understands context, learns your preferences, and provides intelligent responses — all running locally for privacy.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-3">
+        <div class="feat-icon">🎯</div>
+        <div class="feat-title">Focus &amp; Productivity</div>
+        <div class="feat-desc">Built-in Pomodoro timer, distraction alerts, and deep-work mode. Popo tracks your productive sessions and celebrates every milestone.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-1">
+        <div class="feat-icon">🎙️</div>
+        <div class="feat-title">Natural Voice Assistant</div>
+        <div class="feat-desc">Talk to Popo like a colleague. Ask questions, set reminders, control smart home devices, or just chat — all hands-free.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-2">
+        <div class="feat-icon">🔗</div>
+        <div class="feat-title">Seamless Integrations</div>
+        <div class="feat-desc">Connects with Notion, Slack, Google Calendar, Spotify, and 50+ apps. Popo surfaces what matters, right when you need it.</div>
+      </div>
+      <div class="feat-card reveal reveal-delay-3">
+        <div class="feat-icon">🛡️</div>
+        <div class="feat-title">Privacy First</div>
+        <div class="feat-desc">On-device processing keeps your data local. No cloud required for core features. Your conversations stay between you and your Popo.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── HOW IT WORKS ───── -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="section-header reveal">
+      <span class="section-tag">How It Works</span>
+      <h2 class="section-title">Set up in minutes, <span>smart forever</span></h2>
+      <p class="section-sub">Getting started with Popo is effortless. It learns and grows with you every day.</p>
+    </div>
+    <div class="steps-container">
+      <div class="step reveal">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <div class="step-title">Unbox &amp; Power On</div>
+          <div class="step-desc">Place Popo on your desk and press the base button. The setup wizard walks you through Wi-Fi pairing and app connection in under 3 minutes. No technical knowledge required.</div>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-1">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <div class="step-title">Connect Your World</div>
+          <div class="step-desc">Link your calendar, task manager, and favorite apps. Popo immediately starts understanding your schedule, priorities, and communication patterns.</div>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-2">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <div class="step-title">Let Popo Learn You</div>
+          <div class="step-desc">Over the first week, Popo calibrates its AI model to your work style, preferred focus blocks, and emotional cues. The more you use it, the smarter it gets.</div>
+        </div>
+      </div>
+      <div class="step reveal reveal-delay-3">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <div class="step-title">Work Better, Together</div>
+          <div class="step-desc">Popo proactively nudges you at the right moments — celebrating wins, warning about context switches, and keeping you in flow. Your desk is no longer a solo space.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── PRODUCT SHOWCASE ───── -->
+  <section class="showcase">
+    <div class="showcase-inner" style="max-width:1120px;margin:0 auto;">
+      <div class="showcase-img reveal">
+        <img src="ai_desk_companion.png" alt="Popo AI Desk Companion" />
+        <div class="showcase-badge">
+          <div class="showcase-badge-icon">⚡</div>
+          <div class="showcase-badge-text">
+            <div class="showcase-badge-label">Always On</div>
+            <div class="showcase-badge-sub">72hr battery life</div>
+          </div>
+        </div>
+      </div>
+      <div class="showcase-content reveal reveal-delay-2">
+        <span class="section-tag">Meet Popo</span>
+        <h2 class="section-title">Designed to be <span>present</span></h2>
+        <p class="section-sub">Popo's minimal cube form is engineered to sit comfortably on any desk without demanding attention — but always there when you need it.</p>
+        <div class="showcase-features-list">
+          <div class="showcase-feat">
+            <div class="showcase-feat-icon">🎨</div>
+            <div>
+              <div class="showcase-feat-title">HD Emoji Display</div>
+              <div class="showcase-feat-desc">Crisp circular display renders hundreds of expressive animations that feel alive and human.</div>
+            </div>
+          </div>
+          <div class="showcase-feat">
+            <div class="showcase-feat-icon">🔊</div>
+            <div>
+              <div class="showcase-feat-title">360° Directional Audio</div>
+              <div class="showcase-feat-desc">Far-field microphone array and high-fidelity speaker for crystal-clear voice interaction from any angle.</div>
+            </div>
+          </div>
+          <div class="showcase-feat">
+            <div class="showcase-feat-icon">🌡️</div>
+            <div>
+              <div class="showcase-feat-title">Ambient Sensing</div>
+              <div class="showcase-feat-desc">Built-in temperature, light, and proximity sensors allow Popo to adapt to your environment in real time.</div>
+            </div>
+          </div>
+          <div class="showcase-feat">
+            <div class="showcase-feat-icon">🔋</div>
+            <div>
+              <div class="showcase-feat-title">72-Hour Battery</div>
+              <div class="showcase-feat-desc">All-day and overnight use on a single charge. USB-C fast charging brings it back to 80% in 45 minutes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── STATS ───── -->
+  <section class="stats">
+    <div class="stats-grid">
+      <div class="stat-item reveal">
+        <div class="stat-num">4.2K+</div>
+        <div class="stat-label">Pre-orders placed</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-1">
+        <div class="stat-num">27%</div>
+        <div class="stat-label">Avg. productivity boost</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <div class="stat-num">50+</div>
+        <div class="stat-label">App integrations</div>
+      </div>
+      <div class="stat-item reveal reveal-delay-3">
+        <div class="stat-num">4.9★</div>
+        <div class="stat-label">Beta user rating</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── USE CASES ───── -->
+  <section class="usecases" id="use-cases">
+    <div class="section-header reveal">
+      <span class="section-tag">Use Cases</span>
+      <h2 class="section-title">Works for <span>every kind</span> of desk</h2>
+      <p class="section-sub">Whether you're deep in code, running a team, or studying for finals — Popo adapts to your workflow.</p>
+    </div>
+    <div class="usecases-grid" style="max-width:1120px;margin:0 auto;">
+      <div class="usecase-card reveal reveal-delay-1">
+        <div class="usecase-header uc1">💻</div>
+        <div class="usecase-body">
+          <div class="usecase-tag">Developers</div>
+          <div class="usecase-title">Deep Work &amp; Flow State</div>
+          <div class="usecase-desc">Popo guards your focus blocks, mutes notifications during sprints, and surfaces PR reviews only when you surface for air.</div>
+        </div>
+      </div>
+      <div class="usecase-card reveal reveal-delay-2">
+        <div class="usecase-header uc2">📊</div>
+        <div class="usecase-body">
+          <div class="usecase-tag">Managers</div>
+          <div class="usecase-title">Meeting Intelligence</div>
+          <div class="usecase-desc">Get smart agenda summaries before calls, live action-item capture, and gentle nudges when a meeting is running long.</div>
+        </div>
+      </div>
+      <div class="usecase-card reveal reveal-delay-3">
+        <div class="usecase-header uc3">🎓</div>
+        <div class="usecase-body">
+          <div class="usecase-tag">Students</div>
+          <div class="usecase-title">Study Companion</div>
+          <div class="usecase-desc">Pomodoro sessions with cheerful countdowns, quiz mode, and celebratory animations when you crush your study goals.</div>
+        </div>
+      </div>
+      <div class="usecase-card reveal reveal-delay-1">
+        <div class="usecase-header uc4">🎨</div>
+        <div class="usecase-body">
+          <div class="usecase-tag">Creatives</div>
+          <div class="usecase-title">Creative Flow</div>
+          <div class="usecase-desc">Popo plays ambient soundscapes, tracks creative sessions, and offers a gentle creative prompt when you hit a block.</div>
+        </div>
+      </div>
+      <div class="usecase-card reveal reveal-delay-2">
+        <div class="usecase-header uc5">🏠</div>
+        <div class="usecase-body">
+          <div class="usecase-tag">Remote Workers</div>
+          <div class="usecase-title">Home Office Hub</div>
+          <div class="usecase-desc">Control smart lights, thermostats, and door locks with a voice command. Popo is the nerve center of your home office.</div>
+        </div>
+      </div>
+      <div class="usecase-card reveal reveal-delay-3">
+        <div class="usecase-header uc6">🧘</div>
+        <div class="usecase-body">
+          <div class="usecase-tag">Wellness</div>
+          <div class="usecase-title">Mindful Work Day</div>
+          <div class="usecase-desc">Breathing exercises, posture reminders, hydration nudges, and end-of-day reflections to keep you healthy at your desk.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── TESTIMONIALS ───── -->
+  <section class="testimonials">
+    <div class="section-header reveal">
+      <span class="section-tag">Testimonials</span>
+      <h2 class="section-title">People <span>love</span> their Popo</h2>
+    </div>
+    <div class="testimonials-grid" style="max-width:1120px;margin:0 auto;">
+      <div class="testimonial-card reveal reveal-delay-1">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testimonial-quote">"I was skeptical, but after two weeks with Popo I noticed I was actually finishing my deep work sessions. It's weirdly motivating to see a little face cheering for you."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">S</div>
+          <div>
+            <div class="testimonial-name">Sarah K.</div>
+            <div class="testimonial-role">Senior Engineer, Stripe</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-2">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testimonial-quote">"My team uses it as a shared desk oracle now. We ask Popo to time our standups and it literally frowns when we go over — more effective than any timer app."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">J</div>
+          <div>
+            <div class="testimonial-name">James T.</div>
+            <div class="testimonial-role">Engineering Manager, Notion</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card reveal reveal-delay-3">
+        <div class="testimonial-stars">
+          <span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span><span class="star">★</span>
+        </div>
+        <p class="testimonial-quote">"The wellness features alone are worth it. I used to forget to take breaks for hours. Now Popo gives me this sad droopy face after 90 minutes and I actually listen to it."</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">A</div>
+          <div>
+            <div class="testimonial-name">Anika R.</div>
+            <div class="testimonial-role">Product Designer, Figma</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── PRICING ───── -->
+  <section class="pricing" id="pricing">
+    <div class="section-header reveal">
+      <span class="section-tag">Pricing</span>
+      <h2 class="section-title">Simple, <span>transparent</span> pricing</h2>
+      <p class="section-sub">One device, choose the intelligence tier that fits your workflow.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal reveal-delay-1">
+        <div class="pricing-tier">Starter</div>
+        <div class="pricing-price">$149</div>
+        <div class="pricing-desc">Hardware + essential AI features. Perfect for individuals getting started.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Popo hardware device</li>
+          <li>Emoji expression engine</li>
+          <li>Pomodoro & focus timer</li>
+          <li>5 app integrations</li>
+          <li>Basic voice commands</li>
+        </ul>
+        <button class="pricing-btn">Pre-order Starter</button>
+      </div>
+      <div class="pricing-card popular reveal reveal-delay-2">
+        <span class="popular-badge">Most Popular</span>
+        <div class="pricing-tier">Pro</div>
+        <div class="pricing-price">$249 <span>+ $9/mo</span></div>
+        <div class="pricing-desc">Full AI intelligence suite. For power users who want the complete Popo experience.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Everything in Starter</li>
+          <li>Advanced LLM brain</li>
+          <li>50+ app integrations</li>
+          <li>Mood & productivity analytics</li>
+          <li>Smart home control</li>
+          <li>Ambient sensing suite</li>
+          <li>Priority support</li>
+        </ul>
+        <button class="pricing-btn primary-btn">Pre-order Pro →</button>
+      </div>
+      <div class="pricing-card reveal reveal-delay-3">
+        <div class="pricing-tier">Team</div>
+        <div class="pricing-price">$199 <span>/seat</span></div>
+        <div class="pricing-desc">Bulk pricing for teams. Shared dashboards, meeting intelligence, and admin controls.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li>Everything in Pro</li>
+          <li>Team dashboard & analytics</li>
+          <li>Shared meeting AI</li>
+          <li>Admin console</li>
+          <li>Volume discounts (5+ units)</li>
+          <li>Dedicated onboarding</li>
+          <li>SLA support</li>
+        </ul>
+        <button class="pricing-btn">Contact Sales →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───── CTA BANNER ───── -->
+  <section class="cta-banner">
+    <h2 class="cta-banner-title">Your desk deserves a companion that actually <em>cares</em></h2>
+    <p class="cta-banner-sub">Join 4,200+ early adopters and be first to bring Popo home. Limited first batch available.</p>
+    <div class="cta-banner-actions">
+      <a href="#" class="btn-white">Pre-order Now →</a>
+      <a href="#video" class="btn-outline-white">Watch the demo</a>
+    </div>
+  </section>
+
+  <!-- ───── FOOTER ───── -->
+  <footer>
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">
+          <div class="footer-logo-icon">😊</div>
+          <span class="footer-logo-text">popo</span>
+        </div>
+        <p class="footer-tagline">Your AI desk companion. Expressive, intelligent, and always present on your workspace.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Product</div>
+        <ul class="footer-links">
+          <li><a href="#">Features</a></li>
+          <li><a href="#">How It Works</a></li>
+          <li><a href="#">Pricing</a></li>
+          <li><a href="#">Changelog</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Company</div>
+        <ul class="footer-links">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Press Kit</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Support</div>
+        <ul class="footer-links">
+          <li><a href="#">Documentation</a></li>
+          <li><a href="#">Community</a></li>
+          <li><a href="#">Contact Us</a></li>
+          <li><a href="#">Status</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Popo AI. All rights reserved.</span>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+        <a href="#">Cookie Policy</a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Sticky nav shadow
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // Scroll reveal
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    reveals.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
